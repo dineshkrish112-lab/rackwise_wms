@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Texmo Inventory · Design prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+:root{--red:#d71920;--red-d:#b0121a;--navy:#0d1828;--navy-2:#16243a;--ink:#0f172a;--muted:#64748b;--line:#e5e9f0;--bg:#f3f5f8;--card:#fff;
+--green:#16a34a;--green-bg:#e9f8ef;--amber:#d97706;--amber-bg:#fff5e5;--redbg:#fdecec;--blue:#2563eb;--blue-bg:#eaf1ff;--cyan:#06b6d4}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--bg);display:grid;grid-template-columns:224px minmax(0,1fr);overflow:hidden;min-width:1280px;font-size:14px}
+button{font:inherit;cursor:pointer}
+aside{background:var(--navy);color:#b8c4d6;display:flex;flex-direction:column;padding:18px 12px;gap:6px}
+.brand{display:flex;flex-direction:column;padding:4px 10px 18px;border-bottom:1px solid #22324b;margin-bottom:10px}
+.brand b{font-size:26px;font-weight:800;letter-spacing:.5px;color:#fff;font-style:italic}
+.brand b span{color:var(--red)}
+.brand small{font-size:10.5px;color:#7f8ea6;letter-spacing:.3px}
+nav{display:flex;flex-direction:column;gap:2px}
+nav a{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:10px;color:#b8c4d6;text-decoration:none;cursor:pointer;font-weight:500}
+nav a i{font-size:19px}
+nav a:hover{background:var(--navy-2);color:#fff}
+nav a.active{background:var(--red);color:#fff}
+.side-foot{margin-top:auto;background:var(--navy-2);border-radius:12px;padding:12px;font-size:12px;line-height:1.5}
+.side-foot b{color:#fff;display:block;font-size:13px}
+main{display:grid;grid-template-rows:62px auto minmax(0,1fr) 214px;min-width:0;min-height:0;height:100vh}
+header{display:flex;align-items:center;gap:18px;padding:0 22px;background:#fff;border-bottom:1px solid var(--line)}
+header h1{font-size:16px;margin:0;font-weight:700}
+header h1 small{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.search{flex:1;max-width:520px;margin-left:24px;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:0 12px;height:40px}
+.search input{border:0;background:transparent;outline:0;flex:1;font:inherit}
+.search kbd{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 6px;background:#fff}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:18px}
+.bell{position:relative;font-size:22px;color:#334155}
+.bell em{position:absolute;top:-4px;right:-6px;background:var(--red);color:#fff;font-size:10px;font-style:normal;border-radius:9px;padding:1px 5px}
+.user{display:flex;align-items:center;gap:10px;font-weight:500}
+.avatar{width:34px;height:34px;border-radius:50%;background:#2b3a55;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600}
+.strip{display:flex;gap:10px;padding:12px 22px 0;align-items:stretch}
+.wh{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;cursor:pointer;min-width:0;text-align:left}
+.wh i{font-size:22px;color:#475569}
+.wh b{display:block;font-size:13px;font-weight:600}
+.wh small{color:var(--muted);font-size:11.5px}
+.wh.active{border:1.5px solid var(--red);background:#fff6f6}
+.wh.active i{color:var(--red)}
+.kpis{margin-left:auto;display:flex;gap:10px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;display:flex;align-items:center;gap:12px;min-width:150px}
+.kpi .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:20px}
+.kpi small{color:var(--muted);font-size:11.5px;display:block}
+.kpi b{font-size:17px;font-weight:700}
+.stage{position:relative;margin:12px 22px;border-radius:16px;overflow:hidden;background:#dfe5ec;min-height:0;border:1px solid var(--line)}
+#viewport{position:absolute;inset:0}
+#viewport canvas{display:block}
+.labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lbl{position:absolute;left:0;top:0;white-space:nowrap;will-change:transform}
+.tag{background:#fff;color:var(--ink);font-weight:700;font-size:12px;padding:3px 7px;border-radius:6px;border:1px solid #cbd5e1;box-shadow:0 2px 6px rgba(15,23,42,.15);pointer-events:auto;cursor:pointer}
+.tag.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.zone{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.95);border-radius:10px;padding:6px 10px;box-shadow:0 4px 14px rgba(15,23,42,.18);font-size:12px;font-weight:600}
+.zone i{font-size:18px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center}
+.zone small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+.floortxt{color:rgba(255,255,255,.92);font-weight:800;letter-spacing:3px;font-size:15px;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.callout{background:rgba(13,24,40,.92);color:#fff;border-radius:10px;padding:7px 12px;font-size:13px;font-weight:700;border:1.5px solid var(--cyan);box-shadow:0 0 0 4px rgba(6,182,212,.18)}
+.callout small{display:flex;align-items:center;gap:5px;font-weight:500;color:#cbd5e1;font-size:11.5px}
+.callout small:before{content:"";width:7px;height:7px;border-radius:50%;background:#22c55e}
+.pin{display:flex;flex-direction:column;align-items:center}
+.pin span{background:var(--pc);color:#fff;font-size:12px;font-weight:700;padding:5px 9px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.pin i{font-size:30px;color:var(--pc);margin-top:-4px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.tools{position:absolute;left:14px;top:14px;display:flex;flex-direction:column;gap:10px}
+.seg{display:flex;background:#fff;border-radius:10px;padding:3px;box-shadow:0 2px 8px rgba(15,23,42,.12)}
+.seg button{border:0;background:transparent;padding:6px 11px;border-radius:8px;font-weight:600;font-size:12.5px;color:#334155;display:flex;align-items:center;gap:5px}
+.seg button.on{background:var(--blue-bg);color:var(--blue)}
+.zoom{display:flex;flex-direction:column;background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(15,23,42,.12);width:38px}
+.zoom button{border:0;background:transparent;height:36px;font-size:18px;color:#334155}
+.zoom button+button{border-top:1px solid var(--line)}
+.legend{position:absolute;left:14px;bottom:14px;background:rgba(255,255,255,.95);border-radius:10px;padding:8px 12px;display:flex;gap:14px;font-size:12px;color:#334155;box-shadow:0 2px 8px rgba(15,23,42,.12)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(13,24,40,.8);color:#e2e8f0;font-size:12px;padding:6px 12px;border-radius:20px}
+.panel{position:absolute;right:14px;top:14px;bottom:14px;width:330px;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(15,23,42,.18);overflow:auto;padding:16px;transition:transform .25s,opacity .25s}
+.panel.hidden{transform:translateX(24px);opacity:0;pointer-events:none}
+.p-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.p-h i.ti-box{font-size:20px;color:var(--blue)}
+.p-h b{font-size:16px}
+.p-h button{margin-left:auto;border:0;background:var(--bg);width:28px;height:28px;border-radius:8px;font-size:16px}
+.ringrow{display:flex;align-items:center;gap:16px;padding:6px 0 14px;border-bottom:1px solid var(--line)}
+.ringrow small{color:var(--muted);display:block}
+.ringrow b{font-size:18px}
+.kv{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.kv i{font-size:18px;color:#475569;margin-top:2px}
+.kv small{display:block;color:var(--muted);font-size:11.5px}
+.kv b{font-weight:600;font-size:13.5px}
+.elev-h{display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px}
+.elev-h b{font-size:13.5px}
+.mini-legend{display:flex;gap:10px;font-size:11px;color:var(--muted)}
+.mini-legend span:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;background:var(--c)}
+.elev{display:grid;gap:4px;background:#f1f5f9;border-radius:10px;padding:8px;border:1px solid var(--line)}
+.elev .rowlbl{font-size:10.5px;color:var(--muted);display:flex;align-items:center}
+.cell{position:relative;height:30px;border-radius:6px;border:1px solid transparent;overflow:hidden;padding:0}
+.cell i{position:absolute;left:0;right:0;bottom:0;opacity:.85}
+.cell.st-empty{background:#e9f8ef;border-color:#bfe7cc}
+.cell.st-partial{background:#fff5e5;border-color:#f6d6a3}
+.cell.st-partial i{background:#f59e0b}
+.cell.st-full{background:#fdecec;border-color:#f4bcbc}
+.cell.st-full i{background:#ef4444}
+.cell.pick{outline:2px solid var(--blue);outline-offset:1px}
+.bin-info{margin-top:10px;background:var(--bg);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.55;min-height:58px}
+.bin-info b{font-family:ui-monospace,Consolas,monospace}
+.btn{border:0;border-radius:9px;padding:9px 14px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.primary:hover{background:#1d4ed8}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:#334155}
+.btn.full{width:100%;margin-top:12px}
+.bottom{display:grid;grid-template-columns:1.35fr 1.35fr 1.1fr .8fr;gap:12px;padding:0 22px 16px;min-height:0}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.card-h{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:700;font-size:14px}
+.card-h i{font-size:18px}
+.card-h .chip{margin-left:auto;font-size:11.5px;font-weight:600;border-radius:8px;padding:4px 9px;border:0}
+.chip.g{background:var(--green);color:#fff}
+.chip.a{background:var(--amber-bg);color:var(--amber)}
+.chip.n{background:var(--bg);color:var(--muted)}
+.inc{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px 12px;align-items:center;flex:1;min-height:0;align-content:start}
+.inc .sugg{grid-column:1/-1;display:flex;align-items:center;gap:10px}
+.inc .sugg>div:first-child{flex:1;min-width:0}
+.thumb{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;font-size:26px}
+.inc-t b{display:block;font-size:14px}
+.inc-t small{display:block;color:var(--muted);font-size:12px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sugg{border:1.5px solid #9fdcb4;background:var(--green-bg);border-radius:12px;padding:8px 10px}
+.sugg.out{border-color:#f3cf94;background:var(--amber-bg)}
+.sugg-h{font-size:11.5px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:5px}
+.sugg.out .sugg-h{color:var(--amber)}
+.sugg .code{font-weight:700;font-size:13.5px;margin:3px 0 1px}
+.sugg .why{font-size:11px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sugg .code{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sugg .row{display:flex;flex-direction:column;gap:5px;width:122px}
+.sugg .btn{padding:6px 10px;font-size:12px}
+.sugg .btn.go{background:var(--green);color:#fff;flex:1}
+.sugg.out .btn.go{background:var(--amber)}
+.tx{display:flex;flex-direction:column;gap:2px;overflow:auto}
+.tx-row{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:6px 2px;border-bottom:1px solid #f1f5f9}
+.tx-row .ic{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:16px}
+.tx-row b{font-size:13px;display:block}
+.tx-row small{color:var(--muted);font-size:11.5px}
+.tx-row .amt{text-align:right;font-weight:700;font-size:13px}
+.tx-row .amt small{display:block;font-weight:500}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
+.qa button{border:1px solid var(--line);background:#fff;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:600;color:#334155}
+.qa button i{font-size:22px;color:var(--blue)}
+.qa button:hover{background:var(--blue-bg)}
+.toast{position:absolute;left:50%;top:16px;transform:translate(-50%,-20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-weight:500;font-size:13px;opacity:0;transition:.3s;display:flex;gap:8px;align-items:center;pointer-events:none;z-index:5}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast i{color:#4ade80;font-size:18px}
+.modal-bg{position:fixed;inset:0;background:rgba(13,24,40,.55);display:none;align-items:center;justify-content:center;z-index:20}
+.modal-bg.on{display:flex}
+.modal{background:#fff;border-radius:16px;padding:20px 22px;width:760px;max-width:92vw;max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal.sm{width:380px}
+.m-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.m-h b{font-size:17px}
+.m-h button{margin-left:auto;border:0;background:var(--bg);width:30px;height:30px;border-radius:8px;font-size:16px}
+.m-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.m-kpis div{background:var(--bg);border-radius:12px;padding:10px 12px}
+.m-kpis small{color:var(--muted);font-size:12px;display:block}
+.m-kpis b{font-size:19px}
+.toprow{display:grid;grid-template-columns:150px 1fr 70px;gap:10px;align-items:center;font-size:13px;padding:5px 0}
+.bar{height:10px;border-radius:5px;background:#eef2f7;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);border-radius:5px}
+.qrlabel{border:2px dashed #cbd5e1;border-radius:14px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.qrlabel .bc{font-family:ui-monospace,Consolas,monospace;font-size:22px;font-weight:800;letter-spacing:1px}
+.qrlabel small{color:var(--muted)}
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand"><b>TEX<span>MO</span></b><small>Pumps · Motors · Solutions</small></div>
+  <nav id="nav">
+    <a class="active"><i class="ti ti-layout-dashboard"></i>Dashboard</a>
+    <a><i class="ti ti-building-warehouse"></i>Warehouses</a>
+    <a><i class="ti ti-packages"></i>Inventory</a>
+    <a><i class="ti ti-truck-delivery"></i>Receipts</a>
+    <a><i class="ti ti-truck"></i>Dispatch</a>
+    <a><i class="ti ti-arrows-exchange"></i>Transfers</a>
+    <a><i class="ti ti-qrcode"></i>QR labels</a>
+    <a><i class="ti ti-chart-bar"></i>Reports</a>
+    <a><i class="ti ti-settings"></i>Settings</a>
+  </nav>
+  <div class="side-foot"><b>Design prototype</b>Drag to rotate, scroll to zoom, click any rack or bin.</div>
+</aside>
+
+<main>
+  <header>
+    <h1>Inventory management system<small>Smart storage. Smarter operations.</small></h1>
+    <label class="search"><i class="ti ti-search"></i><input id="search" placeholder="Search material, rack or bin code (A1-L2-B03)"><kbd>Enter</kbd></label>
+    <div class="hdr-r">
+      <span class="bell"><i class="ti ti-bell"></i><em>3</em></span>
+      <span class="user"><span class="avatar">AD</span>Admin <i class="ti ti-chevron-down"></i></span>
+    </div>
+  </header>
+
+  <div class="strip">
+    <div id="whTabs" style="display:flex;gap:10px"></div>
+    <div class="kpis">
+      <div class="kpi"><span class="ic" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-box"></i></span><div><small>Stock in warehouse</small><b id="kStock">–</b></div></div>
+      <div class="kpi"><svg width="38" height="38" viewBox="0 0 38 38"><circle cx="19" cy="19" r="15" fill="none" stroke="#e8edf3" stroke-width="5"/><circle id="kRing" cx="19" cy="19" r="15" fill="none" stroke="#16a34a" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90 19 19)"/></svg><div><small>Utilisation</small><b id="kUtil">–</b></div></div>
+      <div class="kpi"><span class="ic" style="background:#f2ecff;color:#7c3aed"><i class="ti ti-truck"></i></span><div><small>Today dispatch</small><b id="kDisp">–</b></div></div>
+    </div>
+  </div>
+
+  <section class="stage" id="stage">
+    <div id="viewport"></div>
+    <div class="labels" id="labels"></div>
+    <div class="tools">
+      <div class="seg"><button id="b3d" class="on"><i class="ti ti-cube"></i>3D</button><button id="b2d"><i class="ti ti-layout-grid"></i>2D</button></div>
+      <div class="zoom"><button id="zin" title="Zoom in"><i class="ti ti-plus"></i></button><button id="zout" title="Zoom out"><i class="ti ti-minus"></i></button><button id="zhome" title="Reset view"><i class="ti ti-focus-centered"></i></button></div>
+    </div>
+    <div class="legend"><span><i style="background:#22c55e"></i>Available</span><span><i style="background:#f59e0b"></i>Partial</span><span><i style="background:#ef4444"></i>Full</span><span><i style="background:#06b6d4"></i>Selected</span></div>
+    <div class="hint" id="hint">Click a rack to see its details</div>
+    <div class="panel hidden" id="panel"></div>
+    <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span></span></div>
+  </section>
+
+  <section class="bottom">
+    <div class="card" id="incCard"></div>
+    <div class="card" id="dspCard"></div>
+    <div class="card"><div class="card-h"><i class="ti ti-activity" style="color:var(--blue)"></i>Recent transactions<button class="chip n">View all</button></div><div class="tx" id="txList"></div></div>
+    <div class="card"><div class="card-h"><i class="ti ti-bolt" style="color:var(--amber)"></i>Quick actions</div>
+      <div class="qa">
+        <button id="qaQr"><i class="ti ti-qrcode"></i>Generate QR</button>
+        <button id="qaTr"><i class="ti ti-arrows-exchange"></i>Transfer stock</button>
+        <button id="qaCount"><i class="ti ti-clipboard-check"></i>Stock count</button>
+        <button id="qaRep"><i class="ti ti-chart-histogram"></i>Monthly analysis</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/environments/RoomEnvironment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ---------- constants and demo data ---------- */
+const BAY_W=2.7, DEPTH=1.2, LH=1.5, SLOT=3.2;
+const TODAY=new Date(2026,10,4,15,10);
+const DOCK={x:23,z:-20};
+const WAREHOUSES=[
+  {code:'WH-A',name:'Warehouse A',place:'Coimbatore',seed:11},
+  {code:'WH-B',name:'Warehouse B',place:'Saravanampatti',seed:29},
+  {code:'WH-C',name:'Warehouse C',place:'Perundurai',seed:47},
+  {code:'WH-D',name:'Warehouse D',place:'Avinashi',seed:83}];
+const LAYOUT=[
+  {id:'A1',type:'rack',x:-17,  z0:-19,bays:5,levels:4,mat:'steel',  zone:'Z-ST'},
+  {id:'A2',type:'rack',x:-12.5,z0:-19,bays:5,levels:4,mat:'copper', zone:'Z-ST'},
+  {id:'B1',type:'rack',x:-4.5, z0:-19,bays:5,levels:4,mat:'casting',zone:'Z-ST'},
+  {id:'B2',type:'rack',x:0,    z0:-19,bays:5,levels:4,mat:'carton', zone:'Z-ST'},
+  {id:'B3',type:'rack',x:8,    z0:-19,bays:5,levels:4,mat:'crate',  zone:'Z-ST'},
+  {id:'C1',type:'rack',x:12.5, z0:-19,bays:5,levels:4,mat:'carton2',zone:'Z-ST'},
+  {id:'L1',type:'rack',x:-25,  z0:2.5,bays:4,levels:2,mat:'drum',   zone:'Z-LQ'},
+  {id:'E1',type:'floor',x0:7,  z0:3.5,bays:4,levels:3,mat:'motor',  zone:'Z-EQ'}];
+const MAT={
+  steel:  {name:'Steel rods',cap:2000,icon:'ti-stack-2',tint:['#eef1f4','#5b6470']},
+  copper: {name:'Copper wire coils',cap:2000,icon:'ti-circles',tint:['#fbeee6','#b4561f']},
+  casting:{name:'Pump castings',cap:2000,icon:'ti-settings-2',tint:['#eceef1','#4b5563']},
+  carton: {name:'Bearing sets',cap:2000,icon:'ti-package',tint:['#f8efe2','#9a6b2f']},
+  carton2:{name:'Packing material',cap:2000,icon:'ti-box',tint:['#f8efe2','#9a6b2f']},
+  crate:  {name:'Stator cores',cap:2000,icon:'ti-layers-subtract',tint:['#e7f5ec','#2f7d4f']},
+  drum:   {name:'Coolant and oils',cap:1600,unitW:200,unit:'drums',icon:'ti-droplet',tint:['#e8f0fd','#1e5bb8']},
+  motor:  {name:'Motors and pumps',cap:1000,unitW:150,unit:'nos',icon:'ti-engine',tint:['#e8f0fd','#1e4fa0']}};
+const INCOMING=[
+  {item:'Steel rod Ø40 mm',mat:'steel',kg:2000,ref:'GRN-1042',from:'JSW Steel'},
+  {item:'Coolant 200 L drums',mat:'drum',kg:800,ref:'GRN-1043',from:'Gulf Oil Lubricants'},
+  {item:'Induction motor 5 HP',mat:'motor',kg:450,ref:'GRN-1044',from:'Texmo motor line 2'},
+  {item:'Copper winding wire',mat:'copper',kg:1200,ref:'GRN-1045',from:'Hindalco'}];
+const DISPATCH=[
+  {item:'Steel rod Ø40 mm',mat:'steel',kg:700,ref:'DSP-2291',to:'Assembly line 3'},
+  {item:'Copper winding wire',mat:'copper',kg:500,ref:'DSP-2292',to:'Motor winding shop'},
+  {item:'Coolant 200 L drums',mat:'drum',kg:400,ref:'DSP-2293',to:'Machine shop'},
+  {item:'Bearing sets',mat:'carton',kg:600,ref:'DSP-2294',to:'Pump assembly'}];
+
+const state={wh:0,racks:[],byId:{},bins:{},sel:null,selBin:null,mode:'3d',tx:[],todayDisp:14,hl:[]};
+let _s=1; const rand=()=>(_s=(_s*16807)%2147483647,(_s-1)/2147483646);
+const pad=n=>String(n).padStart(2,'0');
+const fmtKg=kg=>kg>=1000?parseFloat((kg/1000).toFixed(2))+' t':Math.round(kg)+' kg';
+const fmtDate=d=>d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+const fmtTime=d=>d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+const status=b=>b.kg<=0?'empty':b.kg/b.cap>=0.85?'full':'partial';
+const qtyText=b=>{const m=MAT[b.mat];return m.unitW?`${Math.round(b.kg/m.unitW)} ${m.unit} · ${fmtKg(b.kg)}`:fmtKg(b.kg)};
+const binName=b=>b.type==='floor'?`${b.rack} · Row ${b.level+1} · Slot ${pad(b.bay+1)}`:`${b.rack} · Level ${b.level+1} · Bin ${pad(b.bay+1)}`;
+
+function generate(wh){
+  _s=wh.seed; const fillP=0.58+rand()*0.18;
+  state.racks=[];state.byId={};state.bins={};
+  LAYOUT.forEach(def=>{
+    const r=Object.assign({},def,{bins:[]}); const m=MAT[r.mat];
+    for(let l=0;l<r.levels;l++)for(let b=0;b<r.bays;b++){
+      let kg=0;
+      if(rand()<fillP){kg=(0.3+rand()*0.7)*m.cap; kg=m.unitW?Math.max(m.unitW,Math.round(kg/m.unitW)*m.unitW):Math.round(kg/50)*50;}
+      const code=r.type==='floor'?`${r.id}-R${l+1}-S${pad(b+1)}`:`${r.id}-L${l+1}-B${pad(b+1)}`;
+      const bin={code,rack:r.id,type:r.type,mat:r.mat,level:l,bay:b,cap:m.cap,kg,
+        date:new Date(TODAY-(2+Math.floor(rand()*40))*86400000),batch:'B-'+(4100+Math.floor(rand()*800)),idx:r.bins.length};
+      r.bins.push(bin); state.bins[code]=bin;
+    }
+    // keep room for the demo: at least one empty ground bin and two empties overall
+    r.bins[Math.floor(rand()*r.bays)].kg=0;
+    while(r.bins.filter(b=>b.kg<=0).length<3) r.bins[Math.floor(rand()*r.bins.length)].kg=0;
+    state.racks.push(r); state.byId[r.id]=r;
+  });
+}
+
+/* ---------- three.js scene ---------- */
+const vp=document.getElementById('viewport'), labelLayer=document.getElementById('labels');
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=0.85;
+vp.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xd5dce5);
+scene.fog=new THREE.Fog(0xdfe5ec,90,170);
+const camera=new THREE.PerspectiveCamera(42,1,0.5,400);
+const HOME={p:new THREE.Vector3(-3,23,27),t:new THREE.Vector3(-3,0,-5)};
+camera.position.copy(HOME.p);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.target.copy(HOME.t); controls.enableDamping=true; controls.dampingFactor=0.08;
+controls.maxPolarAngle=Math.PI/2.2; controls.minDistance=6; controls.maxDistance=110;
+
+const pmrem=new THREE.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(new THREE.RoomEnvironment(),0.04).texture;
+scene.add(new THREE.HemisphereLight(0xffffff,0x8a909a,0.35));
+const sun=new THREE.DirectionalLight(0xfff6ea,1.05); sun.position.set(-18,42,22); sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048); Object.assign(sun.shadow.camera,{left:-40,right:40,top:40,bottom:-40,near:1,far:130});
+sun.shadow.bias=-0.0006; scene.add(sun);
+const fill=new THREE.DirectionalLight(0xdbe8ff,0.35); fill.position.set(25,20,-10); scene.add(fill);
+
+function tex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=8;return t;}
+const M=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.7,metalness:0,envMapIntensity:0.35},o||{}));
+const floorTex=tex(512,512,(g,w,h)=>{g.fillStyle='#9ea5ae';g.fillRect(0,0,w,h);
+  for(let i=0;i<14000;i++){const v=145+Math.random()*70|0;g.fillStyle=`rgba(${v},${v},${v+5},.28)`;g.fillRect(Math.random()*w,Math.random()*h,2,2);}
+  g.strokeStyle='rgba(95,100,110,.45)';g.lineWidth=3;g.strokeRect(0,0,w,h);});
+floorTex.repeat.set(10,7);
+const mats={
+  floor:M(0xffffff,{map:floorTex,roughness:0.85}),
+  wall:M(0xdde2e8,{roughness:0.9}), dado:M(0x9fb0c4,{roughness:0.8}), roofBeam:M(0xc5ccd5),
+  window:new THREE.MeshBasicMaterial({color:0xf4f9ff}),
+  upright:M(0x1d4fb3,{metalness:0.35,roughness:0.45}), beam:M(0xf0731a,{metalness:0.25,roughness:0.45}),
+  deck:M(0x8f99a5,{metalness:0.6,roughness:0.4}), pallet:M(0xb5895a,{roughness:0.9}),
+  copper:M(0xc06a36,{metalness:0.75,roughness:0.32}), casting:M(0x5a6068,{metalness:0.55,roughness:0.55}),
+  drumBlue:M(0x1d5bc4,{metalness:0.3,roughness:0.38}), drumDark:M(0x2f3640,{metalness:0.35,roughness:0.4}),
+  tank:M(0xd6dbe1,{metalness:0.9,roughness:0.22,envMapIntensity:1}), yellow:M(0xf3c234,{roughness:0.5}),
+  motor:M(0x2457b0,{metalness:0.4,roughness:0.4}), dark:M(0x2b2f36,{roughness:0.6}), steel:M(0xa8b0b9,{metalness:0.85,roughness:0.3,envMapIntensity:1}),
+  door:M(0x9aa5b2,{metalness:0.4,roughness:0.5}), black:M(0x111111,{roughness:0.8})};
+const cache={};
+function cartonTex(base){return tex(128,128,(g,w,h)=>{g.fillStyle=base;g.fillRect(0,0,w,h);
+  g.fillStyle='rgba(255,255,255,.2)';g.fillRect(w*.44,0,w*.12,h);g.strokeStyle='rgba(70,45,20,.55)';g.lineWidth=5;g.strokeRect(2,2,w-4,h-4);
+  g.fillStyle='rgba(255,255,255,.85)';g.fillRect(w*.12,h*.6,w*.24,h*.16);});}
+function crateTex(){return tex(128,128,(g,w,h)=>{g.fillStyle='#2f8a55';g.fillRect(0,0,w,h);g.fillStyle='rgba(0,0,0,.28)';
+  for(let i=0;i<4;i++)g.fillRect(w*.12,h*(.14+i*.2),w*.76,h*.08);g.strokeStyle='rgba(0,0,0,.4)';g.lineWidth=5;g.strokeRect(2,2,w-4,h-4);});}
+function rodEndTex(){return tex(64,64,(g,w,h)=>{g.fillStyle='#3d434a';g.fillRect(0,0,w,h);g.fillStyle='#c9cfd6';g.beginPath();g.arc(32,32,27,0,7);g.fill();
+  g.fillStyle='#9aa2ab';g.beginPath();g.arc(32,32,18,0,7);g.fill();});}
+function rodSideTex(){return tex(64,64,(g,w,h)=>{g.fillStyle='#a9b1ba';g.fillRect(0,0,w,h);g.fillStyle='rgba(40,45,52,.45)';g.fillRect(0,0,w,6);g.fillStyle='rgba(255,255,255,.35)';g.fillRect(0,22,w,8);});}
+function tmat(key,mk,rx,ry,o){const k=key+':'+rx+'x'+ry;if(!cache[k]){const t=mk();t.repeat.set(rx,ry);cache[k]=M(0xffffff,Object.assign({map:t,roughness:0.8},o||{}));}return cache[k];}
+const geo=(k,f)=>cache['g'+k]||(cache['g'+k]=f());
+const BG=(w,h,d)=>geo(`b${w}_${h}_${d}`,()=>new THREE.BoxGeometry(w,h,d));
+const CG=(rt,rb,h,s=20)=>geo(`c${rt}_${rb}_${h}_${s}`,()=>new THREE.CylinderGeometry(rt,rb,h,s));
+
+let world=new THREE.Group(); scene.add(world);
+let pickables=[], labels=[];
+function mk(g,m,x,y,z,parent,ud){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;
+  (parent||world).add(o);if(ud){o.userData=ud;pickables.push(o);}return o;}
+function addLabel(html,pos,cls,onclick){const el=document.createElement('div');el.className='lbl '+(cls||'');el.innerHTML=html;
+  if(onclick){el.style.pointerEvents='auto';el.onclick=onclick;}labelLayer.appendChild(el);const L={el,pos:pos.clone()};labels.push(L);return L;}
+function removeLabel(L){if(!L)return;L.el.remove();labels=labels.filter(x=>x!==L);}
+
+function lineSeg(x0,z0,x1,z1,col=0xf2c230,w=0.14){const dx=x1-x0,dz=z1-z0,len=Math.hypot(dx,dz);
+  const o=new THREE.Mesh(new THREE.BoxGeometry(dz===0?len:w,0.02,dz===0?w:len),new THREE.MeshStandardMaterial({color:col,roughness:0.6}));
+  o.position.set((x0+x1)/2,0.012,(z0+z1)/2);o.receiveShadow=true;world.add(o);}
+function rectLine(x0,z0,x1,z1,col,dashed){
+  const seg=(a,b,c,d)=>{if(!dashed)return lineSeg(a,b,c,d,col);const len=Math.hypot(c-a,d-b),n=Math.floor(len/1.2);
+    for(let i=0;i<n;i+=1){if(i%2)continue;const t0=i/n,t1=(i+1)/n;lineSeg(a+(c-a)*t0,b+(d-b)*t0,a+(c-a)*t1,b+(d-b)*t1,col);}};
+  seg(x0,z0,x1,z0);seg(x1,z0,x1,z1);seg(x1,z1,x0,z1);seg(x0,z1,x0,z0);}
+function railing(x0,z0,x1,z1,openSide){
+  const sides=[[x0,z0,x1,z0,'n'],[x1,z0,x1,z1,'e'],[x1,z1,x0,z1,'s'],[x0,z1,x0,z0,'w']];
+  sides.forEach(([a,b,c,d,s])=>{const len=Math.hypot(c-a,d-b),n=Math.max(1,Math.round(len/1.6));
+    let from=0,to=n; if(s===openSide){from=Math.floor(n*0.35);to=Math.ceil(n*0.65);
+      // two segments around opening
+      [[0,from],[to,n]].forEach(([f,t])=>railRun(a,b,c,d,n,f,t));return;}
+    railRun(a,b,c,d,n,0,n);});}
+function railRun(a,b,c,d,n,f,t){if(t<=f)return;for(let i=f;i<=t;i++){const x=a+(c-a)*i/n,z=b+(d-b)*i/n;mk(BG(0.08,1.1,0.08),mats.yellow,x,0.55,z);}
+  const xa=a+(c-a)*f/n,za=b+(d-b)*f/n,xb=a+(c-a)*t/n,zb=b+(d-b)*t/n,len=Math.hypot(xb-xa,zb-za),horiz=Math.abs(zb-za)<0.01;
+  [0.55,1.05].forEach(y=>mk(new THREE.BoxGeometry(horiz?len:0.06,0.06,horiz?0.06:len),mats.yellow,(xa+xb)/2,y,(za+zb)/2));}
+
+function buildShell(){
+  const fl=new THREE.Mesh(new THREE.PlaneGeometry(66,44),mats.floor);fl.rotation.x=-Math.PI/2;fl.position.set(-1,0,-1);fl.receiveShadow=true;world.add(fl);
+  // walls: back and left (front/right open so the camera sees in)
+  mk(BG(66,10,0.4),mats.wall,-1,5,-23.2); mk(BG(66,1.4,0.42),mats.dado,-1,0.7,-23.15);
+  mk(BG(0.4,10,44),mats.wall,-34.2,5,-1); mk(BG(0.42,1.4,44),mats.dado,-34.15,0.7,-1);
+  for(let x=-30;x<=28;x+=8){mk(BG(5.2,1.6,0.1),mats.window,x,7.8,-22.95);mk(BG(0.5,10,0.6),mats.roofBeam,x+4,5,-22.8);}
+  for(let z=-18;z<=16;z+=8){mk(BG(0.1,1.6,5.2),mats.window,-33.95,7.8,z);}
+  // dock shutter on back wall
+  const shut=tmat('shutter',()=>tex(64,64,(g,w,h)=>{g.fillStyle='#a7b1bd';g.fillRect(0,0,w,h);g.fillStyle='rgba(60,70,82,.45)';g.fillRect(0,0,w,5);}),1,14,{metalness:0.4,roughness:0.5});
+  mk(BG(5,5,0.15),shut,23,2.5,-22.95); mk(BG(5.6,0.35,0.3),mats.yellow,23,5.15,-22.9);
+  [-2.75,2.75].forEach(dx=>mk(BG(0.3,5.3,0.3),mats.yellow,23+dx,2.65,-22.9));
+  // floor markings
+  lineSeg(-30,-3.6,30,-3.6); lineSeg(-30,0.4,30,0.4);
+  rectLine(17.5,-21.5,28.5,-11,0xf2c230); rectLine(-28,1,-13.6,15.4,0xf2c230); rectLine(6,2.6,20.6,14,0xf2c230,true);
+  // liquid zone railing + tanks
+  railing(-27.6,1.2,-13.8,15.2,'e');
+  [[-20,4.4],[-16.4,4.4],[-20,8.6],[-16.4,8.6]].forEach(([x,z])=>{
+    mk(CG(1.15,1.15,3,28),mats.tank,x,2.1,z); const dome=mk(geo('dome',()=>new THREE.SphereGeometry(1.15,28,12,0,Math.PI*2,0,Math.PI/2)),mats.tank,x,3.6,z);
+    [[.8,.8],[-.8,.8],[.8,-.8],[-.8,-.8]].forEach(([a,b])=>mk(BG(0.1,0.6,0.1),mats.steel,x+a,0.3,z+b));
+    mk(CG(0.06,0.06,0.5,8),mats.steel,x+1.2,0.9,z);});
+  // loose drums on floor in liquid zone
+  for(let i=0;i<3;i++)for(let j=0;j<2;j++){const x=-21+i*2.4,z=12.2+j*1.8;mk(BG(1.15,0.14,1.15),mats.pallet,x,0.07,z);
+    [[-.28,-.28],[.28,-.28],[-.28,.28],[.28,.28]].forEach(([a,b])=>mk(CG(0.26,0.26,0.88,18),(i+j)%2?mats.drumBlue:mats.drumDark,x+a,0.58,z+b));}
+  // receiving dock props
+  [[20,-19],[22.4,-19],[20,-16.4]].forEach(([x,z],i)=>{mk(BG(1.15,0.14,1.15),mats.pallet,x,0.07,z);
+    mk(BG(1.05,0.84,1.1),tmat('carton',()=>cartonTex('#c79e66'),2,2),x,0.56,z);});
+  mk(BG(1.15,0.14,1.15),mats.pallet,25.6,0.07,-16.4);
+  mk(BG(1.1,0.55,1.0),[tmat('rodEnd',rodEndTex,6,3),tmat('rodEnd',rodEndTex,6,3),tmat('rodSide',rodSideTex,1,6),tmat('rodSide',rodSideTex,1,6),tmat('rodSide',rodSideTex,1,3),tmat('rodSide',rodSideTex,1,3)],25.6,0.42,-16.4);
+}
+
+function buildRack(r){
+  if(r.type==='floor'){r.L=r.bays*SLOT;r.H=1.6;return;}
+  const L=r.bays*BAY_W,H=r.levels*LH+0.25; r.L=L;r.H=H;
+  const ud={rack:r.id}, xs=[r.x-DEPTH/2,r.x+DEPTH/2];
+  for(let i=0;i<=r.bays;i++){const z=r.z0+i*BAY_W;
+    xs.forEach(x=>{mk(BG(0.09,H,0.09),mats.upright,x,H/2,z,null,ud);mk(BG(0.3,0.03,0.3),mats.dark,x,0.015,z);});
+    for(let y=0.5;y<H;y+=1.4)mk(BG(DEPTH,0.05,0.05),mats.upright,r.x,y,z,null,ud);}
+  for(let l=1;l<=r.levels;l++){const y=l*LH;
+    xs.forEach(x=>mk(BG(0.07,0.13,L),mats.beam,x,y,r.z0+L/2,null,ud));
+    if(l<r.levels)mk(BG(DEPTH,0.03,L),mats.deck,r.x,y+0.08,r.z0+L/2,null,ud);}
+}
+function rackCenter(r){return r.type==='floor'?new THREE.Vector3(r.x0+r.L/2,0.8,r.z0+r.levels*SLOT/2):new THREE.Vector3(r.x,r.H/2,r.z0+r.L/2);}
+function rackSize(r){return r.type==='floor'?new THREE.Vector3(r.L+0.3,1.9,r.levels*SLOT+0.3):new THREE.Vector3(DEPTH+0.5,r.H+0.3,r.L+0.4);}
+function binBox(b){const r=state.byId[b.rack];
+  if(r.type==='floor')return{c:new THREE.Vector3(r.x0+(b.bay+.5)*SLOT,0.85,r.z0+(b.level+.5)*SLOT),s:new THREE.Vector3(SLOT-0.3,1.7,SLOT-0.3)};
+  const base=b.level===0?0:b.level*LH+0.1;
+  return{c:new THREE.Vector3(r.x,base+0.68,r.z0+(b.bay+.5)*BAY_W),s:new THREE.Vector3(DEPTH+0.16,1.32,BAY_W-0.12)};}
+
+function buildLoad(b){
+  if(b.load){world.remove(b.load);pickables=pickables.filter(m=>m.userData.bin!==b.code||!m.userData.isLoad);b.load=null;}
+  if(b.kg<=0)return;
+  const g=new THREE.Group();world.add(g);b.load=g;
+  const ud={rack:b.rack,bin:b.code,isLoad:true}, r=state.byId[b.rack], frac=b.kg/b.cap;
+  const put=(geom,m,x,y,z,rot)=>{const o=mk(geom,m,x,y,z,g,ud);if(rot)o.rotation.set(rot[0],rot[1],rot[2]);return o;};
+  if(r.type==='floor'){
+    const c=binBox(b).c, n=Math.round(b.kg/MAT.motor.unitW), pump=b.idx%2===1;
+    for(let i=0;i<Math.min(n,6);i++){const x=c.x+((i%3)-1)*0.95,z=c.z+(Math.floor(i/3)-0.5)*1.2;
+      put(BG(0.85,0.12,0.85),mats.pallet,x,0.06,z);
+      if(pump){put(CG(0.26,0.3,0.55),mats.motor,x,0.42,z);put(CG(0.2,0.2,0.45),mats.motor,x,0.92,z);put(CG(0.07,0.07,0.35,8),mats.steel,x+0.3,0.4,z,[0,0,Math.PI/2]);}
+      else{put(BG(0.55,0.1,0.42),mats.dark,x,0.17,z);put(CG(0.27,0.27,0.62,20),mats.motor,x,0.48,z,[0,0,Math.PI/2]);
+        put(CG(0.22,0.22,0.08,16),mats.dark,x-0.35,0.48,z,[0,0,Math.PI/2]);put(CG(0.04,0.04,0.2,8),mats.steel,x+0.4,0.48,z,[0,0,Math.PI/2]);
+        put(BG(0.16,0.12,0.16),mats.motor,x,0.8,z);}}
+    return;}
+  const base=b.level===0?0:b.level*LH+0.095, zc=r.z0+(b.bay+.5)*BAY_W;
+  [-0.66,0.66].forEach((dz,i)=>{
+    const fp=i===0?Math.min(1,frac*2):Math.max(0,frac*2-1); if(fp<0.06)return;
+    const z=zc+dz, y0=base+0.14;
+    put(BG(1.1,0.14,1.15),mats.pallet,r.x,base+0.07,z);
+    switch(b.mat){
+      case 'carton': case 'carton2': case 'crate':{
+        const layers=fp>0.5?2:1, h=0.42*layers;
+        const m=b.mat==='crate'?tmat('crate',crateTex,2,layers):tmat(b.mat,()=>cartonTex(b.mat==='carton'?'#c99f67':'#b9875a'),2,layers);
+        put(BG(1.05,h,1.1),m,r.x,y0+h/2,z);break;}
+      case 'steel':{const h=+(0.22+0.5*fp).toFixed(2), rows=Math.max(1,Math.round(h/0.17));
+        const e=tmat('rodEnd',rodEndTex,6,rows), s=tmat('rodSide',rodSideTex,1,rows);
+        put(BG(1.1,h,1.0),[e,e,tmat('rodSide',rodSideTex,1,6),s,s,s],r.x,y0+h/2,z);break;}
+      case 'copper':{const n=fp>0.66?3:fp>0.33?2:1;
+        for(let k=0;k<n;k++)put(geo('coil',()=>new THREE.TorusGeometry(0.32,0.13,12,28)),mats.copper,r.x,y0+0.13+k*0.27,z,[Math.PI/2,0,0]);break;}
+      case 'casting':{const n=fp>0.5?4:2;
+        for(let k=0;k<n;k++){const ox=(k%2-0.5)*0.5,oz=(Math.floor(k/2)-0.5)*0.5*(n>2?1:0);
+          put(CG(0.2,0.24,0.42,16),mats.casting,r.x+ox,y0+0.21,z+oz);put(CG(0.08,0.08,0.22,10),mats.casting,r.x+ox,y0+0.3,z+oz+0.22,[Math.PI/2,0,0]);}break;}
+      case 'drum':{const n=Math.round(fp*4);
+        [[-.28,-.28],[.28,-.28],[-.28,.28],[.28,.28]].slice(0,n).forEach(([a,c])=>put(CG(0.26,0.26,0.88,18),b.idx%3===0?mats.drumDark:mats.drumBlue,r.x+a,y0+0.44,z+c));break;}
+    }});
+}
+
+let fork;
+function buildForklift(){
+  const g=new THREE.Group(),p=(geom,m,x,y,z)=>mk(geom,m,x,y,z,g);
+  p(BG(1.1,0.7,1.7),mats.yellow,0,0.6,0); p(BG(1.1,0.65,0.45),mats.dark,0,0.62,-0.95);
+  [[.48,-.55],[-.48,-.55],[.48,.45],[-.48,.45]].forEach(([x,z])=>p(BG(0.06,1.3,0.06),mats.dark,x,1.6,z));
+  p(BG(1.12,0.06,1.2),mats.dark,0,2.26,-0.05); p(BG(0.5,0.35,0.45),mats.dark,0,1.15,-0.3);
+  [-.32,.32].forEach(x=>p(BG(0.09,2.7,0.12),mats.dark,x,1.4,0.95)); p(BG(0.8,0.08,0.1),mats.dark,0,0.6,1.02);
+  [-.26,.26].forEach(x=>p(BG(0.1,0.05,1.1),mats.steel,x,0.32,1.6));
+  [[.58,.55],[-.58,.55],[.58,-.6],[-.58,-.6]].forEach(([x,z])=>{const w=p(CG(0.27,0.27,0.2,16),mats.black,x,0.27,z);w.rotation.z=Math.PI/2;});
+  p(BG(1.1,0.14,1.15),mats.pallet,0,0.42,1.6); p(BG(1.0,0.8,1.05),tmat('carton',()=>cartonTex('#c79e66'),2,2),0,0.89,1.6);
+  world.add(g); fork={g,t:0};
+}
+
+function buildWorld(){
+  scene.remove(world); world=new THREE.Group(); scene.add(world);
+  pickables=[]; labels.forEach(L=>L.el.remove()); labels=[];
+  buildShell();
+  state.racks.forEach(r=>{buildRack(r); r.bins.forEach(b=>{b.load=null;buildLoad(b);});
+    const tagPos=r.type==='floor'?new THREE.Vector3(r.x0+r.L/2,2.1,r.z0):new THREE.Vector3(r.x,r.H+0.55,r.z0+r.L-0.2);
+    r.tag=addLabel(r.id,tagPos,'tag',()=>selectRack(r.id));});
+  buildForklift();
+  addLabel('<i class="ti ti-droplet" style="background:#e8f0fd;color:#1e5bb8"></i><div>Liquid materials<small>Zone L1 · drums and tanks</small></div>',new THREE.Vector3(-20.5,5.2,6.5),'zone');
+  addLabel('<i class="ti ti-settings" style="background:#e8f0fd;color:#1e4fa0"></i><div>Equipment<small>Zone E1 · motors and pumps</small></div>',new THREE.Vector3(13.3,2.9,3),'zone');
+  addLabel('<i class="ti ti-truck-loading" style="background:#fff5e5;color:#d97706"></i><div>Receiving dock<small>Dock 1 · inward</small></div>',new THREE.Vector3(23,5.8,-21),'zone');
+  addLabel('MAIN AISLE',new THREE.Vector3(-1,0.05,-1.6),'floortxt');
+  selMesh.visible=false; state.hl.forEach(h=>removeLabel(h.pin)); state.hl=[];
+}
+
+/* selection + highlight objects (live outside world) */
+const unitBox=new THREE.BoxGeometry(1,1,1), unitEdges=new THREE.EdgesGeometry(unitBox);
+const selMesh=new THREE.Group();
+selMesh.add(new THREE.Mesh(unitBox,new THREE.MeshBasicMaterial({color:0x22d3ee,transparent:true,opacity:0.14,depthWrite:false})));
+selMesh.add(new THREE.LineSegments(unitEdges,new THREE.LineBasicMaterial({color:0x06b6d4})));
+selMesh.visible=false; scene.add(selMesh);
+let callout=null;
+function addHighlight(b,color,text){
+  const {c,s}=binBox(b), g=new THREE.Group();
+  const m=new THREE.Mesh(unitBox,new THREE.MeshBasicMaterial({color,transparent:true,opacity:0.3,depthWrite:false}));
+  g.add(m); g.add(new THREE.LineSegments(unitEdges,new THREE.LineBasicMaterial({color})));
+  g.position.copy(c); g.scale.copy(s); scene.add(g);
+  const hex='#'+new THREE.Color(color).getHexString();
+  const pin=addLabel(`<span>${text}</span><i class="ti ti-map-pin-filled"></i>`,c.clone().add(new THREE.Vector3(0,s.y/2+0.1,0)),'pin');
+  pin.el.style.setProperty('--pc',hex); state.hl.push({g,m,pin});}
+function clearHighlights(){state.hl.forEach(h=>{scene.remove(h.g);removeLabel(h.pin);});state.hl=[];}
+
+/* ---------- camera ---------- */
+let fly=null;
+function flyTo(t,p,ms=900){fly={t0:performance.now(),ms,fT:controls.target.clone(),fP:camera.position.clone(),tT:t.clone(),tP:p.clone()};}
+function viewPos(t,dist){return state.mode==='2d'?new THREE.Vector3(t.x,dist*2.2,t.z+0.01):new THREE.Vector3(t.x+dist*0.55,t.y+dist*0.6,t.z+dist*0.75);}
+function focusBox(c,dist){flyTo(c,viewPos(c,dist));}
+function setMode(m){state.mode=m;document.getElementById('b3d').classList.toggle('on',m==='3d');document.getElementById('b2d').classList.toggle('on',m==='2d');
+  controls.enableRotate=m==='3d'; controls.mouseButtons.LEFT=m==='2d'?THREE.MOUSE.PAN:THREE.MOUSE.ROTATE;
+  if(m==='2d')flyTo(new THREE.Vector3(-3,0,-3),new THREE.Vector3(-3,70,-2.99)); else flyTo(HOME.t,HOME.p);}
+document.getElementById('b3d').onclick=()=>setMode('3d');
+document.getElementById('b2d').onclick=()=>setMode('2d');
+const dolly=k=>{const d=camera.position.clone().sub(controls.target).multiplyScalar(k);flyTo(controls.target,controls.target.clone().add(d),350);};
+document.getElementById('zin').onclick=()=>dolly(0.7);
+document.getElementById('zout').onclick=()=>dolly(1.4);
+document.getElementById('zhome').onclick=()=>state.mode==='2d'?setMode('2d'):flyTo(HOME.t,HOME.p);
+
+/* ---------- picking ---------- */
+const ray=new THREE.Raycaster(), ndc=new THREE.Vector2(); let down=null, hoverQueued=false, lastMove=null;
+function hit(e){const r=renderer.domElement.getBoundingClientRect();ndc.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
+  ray.setFromCamera(ndc,camera);const h=ray.intersectObjects(pickables,false);return h.length?h[0].object.userData:null;}
+renderer.domElement.addEventListener('pointerdown',e=>down={x:e.clientX,y:e.clientY});
+renderer.domElement.addEventListener('pointerup',e=>{if(!down)return;const moved=Math.hypot(e.clientX-down.x,e.clientY-down.y);down=null;
+  if(moved>5)return;const u=hit(e);if(u)selectRack(u.rack,u.bin);});
+renderer.domElement.addEventListener('pointermove',e=>{lastMove=e;if(hoverQueued)return;hoverQueued=true;
+  requestAnimationFrame(()=>{hoverQueued=false;if(!down)renderer.domElement.style.cursor=hit(lastMove)?'pointer':'grab';});});
+
+/* ---------- UI: selection panel ---------- */
+const panel=document.getElementById('panel');
+function rackStats(r){const used=r.bins.reduce((a,b)=>a+b.kg,0),cap=r.bins.reduce((a,b)=>a+b.cap,0);
+  const filled=r.bins.filter(b=>b.kg>0);return{used,cap,pct:Math.round(used/cap*100),filled:filled.length,empty:r.bins.length-filled.length,
+  oldest:filled.length?filled.reduce((a,b)=>b.date<a.date?b:a):null};}
+function selectRack(id,binCode,noFly){
+  const r=state.byId[id]; if(!r)return; state.sel=id; state.selBin=binCode||null;
+  const c=rackCenter(r), s=rackSize(r); selMesh.position.copy(c); selMesh.scale.copy(s); selMesh.visible=true;
+  state.racks.forEach(x=>x.tag.el.classList.toggle('sel',x.id===id));
+  removeLabel(callout); const st=rackStats(r);
+  callout=addLabel(`Rack ${r.id}<small>${st.pct}% filled · ${MAT[r.mat].name}</small>`,new THREE.Vector3(c.x,c.y+s.y/2+1.6,c.z),'callout');
+  document.getElementById('hint').style.display='none';
+  renderPanel(); if(!noFly)focusBox(new THREE.Vector3(c.x,1.5,c.z),r.type==='floor'?16:19);}
+function renderPanel(){
+  const r=state.byId[state.sel]; if(!r){panel.classList.add('hidden');return;}
+  const st=rackStats(r), m=MAT[r.mat], wh=WAREHOUSES[state.wh], C=2*Math.PI*30, ringCol=st.pct>=85?'#ef4444':st.pct>=60?'#16a34a':'#22c55e';
+  const isFloor=r.type==='floor', rowName=isFloor?'Row':'L';
+  let grid=`<div class="elev" style="grid-template-columns:26px repeat(${r.bays},1fr)">`;
+  const order=[...Array(r.levels).keys()]; if(!isFloor)order.reverse();
+  order.forEach(l=>{grid+=`<div class="rowlbl">${isFloor?'R':'L'}${l+1}</div>`;
+    for(let bb=0;bb<r.bays;bb++){const b=r.bins[l*r.bays+bb],s=status(b);
+      grid+=`<button class="cell st-${s}${state.selBin===b.code?' pick':''}" data-bin="${b.code}" title="${b.code}"><i style="height:${Math.round(b.kg/b.cap*100)}%"></i></button>`;}});
+  grid+=`<div></div>`+[...Array(r.bays).keys()].map(i=>`<div class="rowlbl" style="justify-content:center">${isFloor?'S':'B'}${pad(i+1)}</div>`).join('')+'</div>';
+  const sb=state.selBin?state.bins[state.selBin]:null;
+  const binHtml=sb?`<b>${sb.code}</b> · ${binName(sb)}<br>${sb.kg>0?`${m.name} · ${qtyText(sb)}<br>Batch ${sb.batch} · received ${fmtDate(sb.date)}`:`Empty · capacity ${fmtKg(sb.cap)}`}`
+    :'<span style="color:var(--muted)">Select a bin in the grid or in 3D to see its batch and quantity.</span>';
+  panel.innerHTML=`<div class="p-h"><i class="ti ti-box"></i><b>Rack ${r.id} details</b><button id="pClose"><i class="ti ti-x"></i></button></div>
+  <div class="ringrow"><svg width="76" height="76" viewBox="0 0 76 76"><circle cx="38" cy="38" r="30" fill="none" stroke="#e8edf3" stroke-width="8"/>
+    <circle cx="38" cy="38" r="30" fill="none" stroke="${ringCol}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C*st.pct/100} ${C}" transform="rotate(-90 38 38)"/>
+    <text x="38" y="43" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">${st.pct}%</text></svg>
+    <div><small>Capacity used</small><b>${fmtKg(st.used)} / ${fmtKg(st.cap)}</b><small style="margin-top:4px">${st.filled} bins used · ${st.empty} empty</small></div></div>
+  <div class="kv"><i class="ti ti-map-pin"></i><div><small>Location</small><b>${wh.code} / ${r.zone} / ${r.id}</b></div></div>
+  <div class="kv"><i class="ti ${m.icon}"></i><div><small>Material type</small><b>${m.name}</b></div></div>
+  <div class="kv"><i class="ti ti-clock-hour-4"></i><div><small>Oldest batch (dispatch first)</small><b>${st.oldest?`${st.oldest.code} · ${fmtDate(st.oldest.date)}`:'–'}</b></div></div>
+  <div class="elev-h"><b>${isFloor?'Floor slots':'Rack front view'}</b><div class="mini-legend"><span style="--c:#22c55e">Free</span><span style="--c:#f59e0b">Partial</span><span style="--c:#ef4444">Full</span></div></div>
+  ${grid}<div class="bin-info">${binHtml}</div>
+  <button class="btn primary full" id="pQr"><i class="ti ti-qrcode"></i>${sb?'Print bin QR label':'Print rack QR labels'}</button>`;
+  panel.classList.remove('hidden');
+  document.getElementById('pClose').onclick=()=>{state.sel=null;selMesh.visible=false;removeLabel(callout);callout=null;state.racks.forEach(x=>x.tag.el.classList.remove('sel'));renderPanel();};
+  document.getElementById('pQr').onclick=()=>openQr(sb?sb.code:r.bins[0].code);
+  panel.querySelectorAll('.cell').forEach(el=>el.onclick=()=>{state.selBin=el.dataset.bin;renderPanel();
+    clearHighlights();const b=state.bins[el.dataset.bin];addHighlight(b,0x06b6d4,b.code);});
+}
+
+/* ---------- putaway + FIFO logic ---------- */
+function suggestPutaway(job){
+  const heavy=job.kg>=1000, alloc=[]; let left=job.kg;
+  const cands=state.racks.filter(r=>r.mat===job.mat).flatMap(r=>r.bins).filter(b=>b.kg<=0).map(b=>{
+    const c=binBox(b).c, dist=Math.abs(c.x-DOCK.x)+Math.abs(c.z-DOCK.z); return{b,dist,score:dist+b.level*(heavy?12:3)};}).sort((a,b)=>a.score-b.score);
+  for(const k of cands){if(left<=0)break;const q=Math.min(left,k.b.cap);alloc.push({b:k.b,q,dist:k.dist});left-=q;}
+  return{alloc,left};}
+function suggestPick(job){
+  const bins=state.racks.filter(r=>r.mat===job.mat).flatMap(r=>r.bins).filter(b=>b.kg>0).sort((a,b)=>a.date-b.date);
+  const alloc=[];let left=job.kg;for(const b of bins){if(left<=0)break;const q=Math.min(left,b.kg);alloc.push({b,q});left-=q;}return{alloc,left};}
+
+function renderIncoming(){
+  const job=INCOMING[0], m=MAT[job.mat], s=suggestPutaway(job), card=document.getElementById('incCard');
+  const a=s.alloc[0];
+  const code=a?(s.alloc.length>1?`${s.alloc.map(x=>x.b.code).join(' + ')}`:binName(a.b)):'No free bin';
+  const why=a?`${s.alloc.length>1?'Split across '+s.alloc.length+' bins · ':''}${MAT[job.mat].name} rack · ${a.b.level===0?'ground level':'level '+(a.b.level+1)} · ${Math.round(a.dist)} m from dock`:'Create space or transfer stock';
+  card.innerHTML=`<div class="card-h"><i class="ti ti-truck-delivery" style="color:var(--green)"></i>Incoming material<button class="chip g">+ New receipt</button></div>
+  <div class="inc"><div class="thumb" style="background:${m.tint[0]};color:${m.tint[1]}"><i class="ti ${m.icon}"></i></div>
+   <div class="inc-t"><b>${job.item}</b><small>Qty: ${m.unitW?Math.round(job.kg/m.unitW)+' '+m.unit+' · ':''}${fmtKg(job.kg)} · ${job.ref}</small><small>${job.from} · received ${fmtDate(TODAY)}</small></div>
+   <div class="sugg"><div><div class="sugg-h"><i class="ti ti-circle-check"></i>Suggested location</div><div class="code">${code}</div><div class="why">${why}</div></div>
+    <div class="row"><button class="btn ghost" id="incShow">Show</button><button class="btn go" id="incOk">Confirm location</button></div></div></div>`;
+  document.getElementById('incShow').onclick=()=>showAlloc(s.alloc,0x22c55e,'Put here');
+  document.getElementById('incOk').onclick=()=>{if(!a)return;
+    s.alloc.forEach(x=>{x.b.kg+=x.q;x.b.date=new Date(TODAY);x.b.batch=job.ref.replace('GRN','B');buildLoad(x.b);
+      state.tx.unshift({type:'in',item:job.item,kg:x.q,bin:x.b.code,time:new Date()});});
+    clearHighlights(); selectRack(a.b.rack,a.b.code); addHighlight(a.b,0x22c55e,'Stored ✓');
+    toast(`${job.item} stored in ${s.alloc.map(x=>x.b.code).join(', ')}`);
+    INCOMING.push(INCOMING.shift()); refreshAll();};
+}
+function renderDispatch(){
+  const job=DISPATCH[0], m=MAT[job.mat], s=suggestPick(job), card=document.getElementById('dspCard'), a=s.alloc[0];
+  const code=a?s.alloc.map(x=>x.b.code).join(' + '):'Out of stock';
+  const why=a?`Oldest batch first (FIFO) · received ${fmtDate(a.b.date)}${s.alloc.length>1?' · '+s.alloc.length+' bins':''}`:'No stock available';
+  card.innerHTML=`<div class="card-h"><i class="ti ti-truck" style="color:var(--amber)"></i>Dispatch request<button class="chip a">${job.ref}</button></div>
+  <div class="inc"><div class="thumb" style="background:${m.tint[0]};color:${m.tint[1]}"><i class="ti ${m.icon}"></i></div>
+   <div class="inc-t"><b>${job.item}</b><small>Qty: ${m.unitW?Math.round(job.kg/m.unitW)+' '+m.unit+' · ':''}${fmtKg(job.kg)}</small><small>To ${job.to} · requested ${fmtDate(TODAY)}</small></div>
+   <div class="sugg out"><div><div class="sugg-h"><i class="ti ti-arrow-big-up-lines"></i>Pick from</div><div class="code">${code}</div><div class="why">${why}</div></div>
+    <div class="row"><button class="btn ghost" id="dspShow">Show</button><button class="btn go" id="dspOk">Confirm pick</button></div></div></div>`;
+  document.getElementById('dspShow').onclick=()=>showAlloc(s.alloc,0xf59e0b,'Pick first');
+  document.getElementById('dspOk').onclick=()=>{if(!a)return;
+    s.alloc.forEach(x=>{x.b.kg=Math.max(0,x.b.kg-x.q);buildLoad(x.b);state.tx.unshift({type:'out',item:job.item,kg:x.q,bin:x.b.code,time:new Date()});});
+    state.todayDisp++; clearHighlights(); selectRack(a.b.rack,a.b.code);
+    toast(`Dispatched ${fmtKg(job.kg)} ${job.item} to ${job.to}`); DISPATCH.push(DISPATCH.shift()); refreshAll();};
+}
+function showAlloc(alloc,color,text){if(!alloc.length)return;clearHighlights();
+  alloc.forEach((x,i)=>addHighlight(x.b,color,i===0?`${text} · ${x.b.code}`:x.b.code));
+  const b=alloc[0].b; selectRack(b.rack,b.code,true); const c=binBox(b).c; focusBox(new THREE.Vector3(c.x,c.y,c.z),14);}
+
+function renderTx(){
+  document.getElementById('txList').innerHTML=state.tx.slice(0,6).map(t=>`<div class="tx-row">
+   <span class="ic" style="background:${t.type==='in'?'var(--green-bg)':'var(--redbg)'};color:${t.type==='in'?'var(--green)':'#dc2626'}"><i class="ti ${t.type==='in'?'ti-arrow-down':'ti-arrow-up'}"></i></span>
+   <div><b>${t.type==='in'?'Receipt':'Dispatch'} · ${t.item}</b><small>${t.type==='in'?'To':'From'} ${t.bin}</small></div>
+   <div class="amt" style="color:${t.type==='in'?'var(--green)':'#dc2626'}">${t.type==='in'?'+':'−'}${fmtKg(t.kg)}<small style="color:var(--muted)">${fmtTime(t.time)}</small></div></div>`).join('');}
+function renderKpis(){
+  let used=0,cap=0;state.racks.forEach(r=>r.bins.forEach(b=>{used+=b.kg;cap+=b.cap;}));const u=Math.round(used/cap*100);
+  document.getElementById('kStock').textContent=fmtKg(used);document.getElementById('kUtil').textContent=u+'%';
+  document.getElementById('kRing').setAttribute('stroke-dasharray',`${2*Math.PI*15*u/100} 100`);
+  document.getElementById('kDisp').textContent=state.todayDisp+' moves';}
+function renderTabs(){
+  document.getElementById('whTabs').innerHTML=WAREHOUSES.map((w,i)=>`<button class="wh${i===state.wh?' active':''}" data-i="${i}"><i class="ti ti-building-warehouse"></i><div><b>${w.name}</b><small>${w.place}</small></div></button>`).join('');
+  document.querySelectorAll('.wh').forEach(el=>el.onclick=()=>switchWh(+el.dataset.i));}
+function refreshAll(){renderKpis();renderIncoming();renderDispatch();renderTx();renderPanel();
+  if(state.sel&&callout){const r=state.byId[state.sel];callout.el.innerHTML=`Rack ${r.id}<small>${rackStats(r).pct}% filled · ${MAT[r.mat].name}</small>`;}}
+function switchWh(i){state.wh=i;generate(WAREHOUSES[i]);state.sel=null;removeLabel(callout);callout=null;clearHighlights();buildWorld();renderTabs();
+  panel.classList.add('hidden');document.getElementById('hint').style.display='';flyTo(HOME.t,state.mode==='2d'?new THREE.Vector3(-3,70,-2.99):HOME.p);
+  refreshAll();toast(`Showing ${WAREHOUSES[i].name} · ${WAREHOUSES[i].place}`);}
+
+let toastT;
+function toast(msg){const t=document.getElementById('toast');t.querySelector('span').textContent=msg;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2600);}
+
+/* ---------- search ---------- */
+document.getElementById('search').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const q=e.target.value.trim();if(!q)return;const Q=q.toUpperCase();
+  if(state.bins[Q]){const b=state.bins[Q];clearHighlights();addHighlight(b,0x06b6d4,b.code);selectRack(b.rack,b.code,true);focusBox(binBox(b).c,14);return;}
+  if(state.byId[Q])return selectRack(Q);
+  const r=state.racks.find(r=>MAT[r.mat].name.toLowerCase().includes(q.toLowerCase()));
+  if(r){selectRack(r.id);toast(`${MAT[r.mat].name} found in rack ${r.id}`);return;}
+  toast(`No match for “${q}”. Try A1, B2-L3-B04 or “copper”.`);});
+
+/* ---------- modals ---------- */
+const modalBg=document.getElementById('modalBg'),modal=document.getElementById('modal');
+modalBg.onclick=e=>{if(e.target===modalBg)modalBg.classList.remove('on');};
+function openModal(html,sm){modal.className='modal'+(sm?' sm':'');modal.innerHTML=html;modalBg.classList.add('on');modal.querySelector('.m-close').onclick=()=>modalBg.classList.remove('on');}
+function openQr(code){const b=state.bins[code],wh=WAREHOUSES[state.wh];
+  openModal(`<div class="m-h"><i class="ti ti-qrcode" style="font-size:22px;color:var(--blue)"></i><b>Bin QR label</b><button class="m-close"><i class="ti ti-x"></i></button></div>
+  <div class="qrlabel"><div style="font-weight:800;font-style:italic">TEX<span style="color:var(--red)">MO</span> · ${wh.code}</div><div id="qrBox"></div><div class="bc">${code}</div>
+  <small>${binName(b)} · ${MAT[b.mat].name} · max ${fmtKg(b.cap)}</small></div>
+  <p style="font-size:12.5px;color:var(--muted);line-height:1.6">Stick this on the rack beam. Store keepers scan it with a phone camera during putaway and picking. Until scanners arrive, they can type the code instead.</p>
+  <button class="btn primary full" onclick="toast('Label sent to printer');document.getElementById('modalBg').classList.remove('on')"><i class="ti ti-printer"></i>Print label</button>`,true);
+  try{new QRCode(document.getElementById('qrBox'),{text:`TEXMO|${wh.code}|${code}`,width:150,height:150});}catch(e){document.getElementById('qrBox').textContent='QR';}}
+function openReport(){
+  _s=99+state.wh; const days=[...Array(31)].map((_,i)=>{const d=new Date(2026,9,i+1),wk=d.getDay()===0;return{d:i+1,wk,v:wk?0:Math.round(18+rand()*30+(i>20?8:0))};});
+  const max=Math.max(...days.map(d=>d.v)),tot=days.reduce((a,b)=>a+b.v,0);
+  const bars=days.map((d,i)=>{const h=d.v/max*130;return`<rect x="${i*20+4}" y="${150-h}" width="14" height="${h}" rx="3" fill="${d.wk?'#e2e8f0':'#d71920'}" opacity="${d.wk?1:0.85}"><title>${d.d} Oct: ${d.v} t</title></rect>${i%5===0?`<text x="${i*20+11}" y="166" font-size="10" text-anchor="middle" fill="#64748b">${d.d}</text>`:''}`;}).join('');
+  const weeks=[0,1,2,3,4].map(w=>days.slice(w*7,w*7+7).reduce((a,b)=>a+b.v,0));
+  const top=[['Steel rods',38],['Copper wire coils',24],['Motors and pumps',16],['Pump castings',12],['Coolant and oils',10]];
+  openModal(`<div class="m-h"><i class="ti ti-chart-histogram" style="font-size:22px;color:var(--red)"></i><b>Monthly dispatch analysis · October 2026 · ${WAREHOUSES[state.wh].name}</b><button class="m-close"><i class="ti ti-x"></i></button></div>
+  <div class="m-kpis"><div><small>Total dispatched</small><b>${tot} t</b></div><div><small>Daily average</small><b>${Math.round(tot/26)} t</b></div><div><small>Peak day</small><b>${days.find(d=>d.v===max).d} Oct · ${max} t</b></div><div><small>vs September</small><b style="color:var(--green)">+8.4%</b></div></div>
+  <b style="font-size:13.5px">Dispatch per day (tons)</b>
+  <svg viewBox="0 0 624 172" width="100%" style="margin:8px 0 14px">${bars}</svg>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+   <div><b style="font-size:13.5px">By week</b>${weeks.map((w,i)=>`<div class="toprow" style="grid-template-columns:70px 1fr 60px"><span>Week ${i+1}</span><div class="bar"><i style="width:${w/Math.max(...weeks)*100}%;background:#2563eb"></i></div><b>${w} t</b></div>`).join('')}</div>
+   <div><b style="font-size:13.5px">Top materials</b>${top.map(([n,p])=>`<div class="toprow"><span>${n}</span><div class="bar"><i style="width:${p/38*100}%"></i></div><b>${p}%</b></div>`).join('')}</div></div>`);}
+document.getElementById('qaQr').onclick=()=>openQr(state.selBin||(state.sel?state.byId[state.sel].bins[0].code:'A1-L1-B01'));
+document.getElementById('qaRep').onclick=openReport;
+document.getElementById('qaTr').onclick=()=>toast('Transfer stock: pick a source bin, then a target bin (next design step)');
+document.getElementById('qaCount').onclick=()=>toast('Stock count: scan each bin and enter the counted quantity (next design step)');
+document.querySelectorAll('#nav a').forEach(a=>a.onclick=()=>{if(a.classList.contains('active'))return;
+  if(a.textContent.trim()==='Reports')return openReport(); toast(`${a.textContent.trim()} screen comes in the next design step`);});
+
+/* ---------- loop ---------- */
+function resize(){const w=vp.clientWidth,h=vp.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}
+new ResizeObserver(resize).observe(vp);
+const v3=new THREE.Vector3();
+function updateLabels(){const w=vp.clientWidth,h=vp.clientHeight;
+  for(const L of labels){v3.copy(L.pos).project(camera);const vis=v3.z<1&&v3.z>-1;L.el.style.display=vis?'':'none';
+    if(vis)L.el.style.transform=`translate(${(v3.x*.5+.5)*w}px,${(-v3.y*.5+.5)*h}px) translate(-50%,-100%)`;}}
+let last=performance.now();
+function loop(now){requestAnimationFrame(loop);const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(fly){let k=Math.min(1,(now-fly.t0)/fly.ms);k=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    controls.target.lerpVectors(fly.fT,fly.tT,k);camera.position.lerpVectors(fly.fP,fly.tP,k);if(k>=1)fly=null;}
+  controls.update();
+  if(fork){fork.t+=dt*0.25;const x=-7+13*(0.5-0.5*Math.cos(fork.t)),dir=Math.sin(fork.t);fork.g.position.set(x,0,-1.6);fork.g.rotation.y=dir>=0?Math.PI/2:-Math.PI/2;}
+  const pulse=0.22+0.16*Math.sin(now/220);state.hl.forEach(h=>h.m.material.opacity=pulse);
+  renderer.render(scene,camera);updateLabels();}
+
+/* ---------- start ---------- */
+state.tx=[{type:'out',item:'Steel rod Ø40 mm',kg:700,bin:'A1-L1-B01',time:new Date(2026,10,4,15,15)},
+  {type:'in',item:'Copper winding wire',kg:2000,bin:'A2-L2-B02',time:new Date(2026,10,4,11,20)},
+  {type:'out',item:'Induction motor 5 HP',kg:300,bin:'E1-R1-S02',time:new Date(2026,10,4,10,5)},
+  {type:'in',item:'Coolant 200 L drums',kg:800,bin:'L1-L1-B03',time:new Date(2026,10,4,9,40)}];
+generate(WAREHOUSES[0]); buildWorld(); renderTabs(); resize(); refreshAll(); requestAnimationFrame(loop);
+</script>
+</body>
+</html>

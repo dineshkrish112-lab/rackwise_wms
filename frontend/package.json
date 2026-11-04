@@ -1,0 +1,27 @@
+{
+  "name": "rackwise-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:monolith": "vite build --outDir ../backend/src/main/resources/static --emptyOutDir",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tabler/icons-webfont": "3.24.0",
+    "axios": "1.7.9",
+    "html5-qrcode": "2.3.8",
+    "qrcode.react": "4.2.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "6.28.0",
+    "recharts": "2.15.0",
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "4.3.4",
+    "vite": "5.4.11"
+  }
+}

@@ -1,0 +1,5 @@
+# Copy this file to application-local.yml and put your MySQL login in it.
+spring:
+  datasource:
+    username: root
+    password: 'your-mysql-password'

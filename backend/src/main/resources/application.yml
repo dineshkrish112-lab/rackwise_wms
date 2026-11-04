@@ -1,0 +1,31 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: rackwise-wms
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:rackwise_wms}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Kolkata
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Kolkata
+          batch_size: 100
+        order_inserts: true
+
+app:
+  jwt:
+    # Set JWT_SECRET to your own base64 key (64 random bytes). If empty, a random key is used per run.
+    secret: ${JWT_SECRET:}
+    ttl-hours: ${JWT_TTL_HOURS:12}
+  cors:
+    origins: ${CORS_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
+  seed-demo-data: ${SEED_DEMO_DATA:true}
